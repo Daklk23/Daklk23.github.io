@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Publikacije | Klinički centar Elysium</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: "#1e5b9b", secondary: "#d4af37" },
+          borderRadius: {
+            none: "0px",
+            sm: "4px",
+            DEFAULT: "8px",
+            md: "12px",
+            lg: "16px",
+            xl: "20px",
+            "2xl": "24px",
+            "3xl": "32px",
+            full: "9999px",
+            button: "8px",
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+  <style>
+    :where([class^="ri-"])::before { content: "\f3c2"; }
+    body { font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ""; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #d4af37; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .active::after { width: 100%; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="fixed w-full bg-white shadow-md z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <a href="#" class="text-primary font-['Pacifico'] text-3xl">Elysium</a>
+      </div>
+      <nav class="hidden md:flex space-x-10">
+        <a href="index.html#home" class="nav-link text-gray-800 hover:text-primary transition-colors">Početna</a>
+        <a href="index.html#biografija" class="nav-link text-gray-800 hover:text-primary transition-colors">Biografija</a>
+        <a href="index.html#usluge" class="nav-link text-gray-800 hover:text-primary transition-colors">Usluge</a>
+        <a href="#" class="nav-link active text-gray-800 hover:text-primary transition-colors">Publikacije</a>
+        <a href="index.html#kontakt" class="nav-link text-gray-800 hover:text-primary transition-colors">Kontakt</a>
+      </nav>
+      <div class="md:hidden w-10 h-10 flex items-center justify-center">
+        <button id="mobile-menu-button" class="text-gray-800">
+          <i class="ri-menu-line ri-2x"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white w-full">
+      <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+        <a href="index.html#home" class="text-gray-800 hover:text-primary transition-colors py-2">Početna</a>
+        <a href="index.html#biografija" class="text-gray-800 hover:text-primary transition-colors py-2">Biografija</a>
+        <a href="index.html#usluge" class="text-gray-800 hover:text-primary transition-colors py-2">Usluge</a>
+        <a href="#" class="text-gray-800 hover:text-primary transition-colors py-2">Publikacije</a>
+        <a href="index.html#kontakt" class="text-gray-800 hover:text-primary transition-colors py-2">Kontakt</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-28 pb-20">
+    <div class="container mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+          <h1 id="page-title" class="text-3xl md:text-4xl font-bold text-primary mb-2">Publikacije</h1>
+          <p id="subtitle" class="text-gray-600"></p>
+        </div>
+        <a id="back-link" href="index.html" class="flex items-center text-primary hover:text-primary/80 transition-colors mt-4 md:mt-0">
+          <div class="w-5 h-5 flex items-center justify-center mr-2">
+            <i class="ri-arrow-left-line"></i>
+          </div>
+          <span>Nazad na profil</span>
+        </a>
+      </div>
+
+      <div id="publications-list" class="grid md:grid-cols-2 gap-8"></div>
+    </div>
+  </main>
+
+  <script>
+    const doctors = {
+      "bobi-nacho": {
+        name: "Bobi Nacho",
+        profile: "index.html",
+        publications: [
+          {
+            title: "Napredne tehnike u mikrohirurgiji cerebralnih aneurizmi",
+            venue: "Journal of Neurosurgery, 2023",
+            desc: "Istraživanje novih mikrohirurških tehnika koje značajno smanjuju postoperativne komplikacije kod pacijenata sa kompleksnim cerebralnim aneurizmama."
+          },
+          {
+            title: "Dugoročni rezultati duboke moždane stimulacije kod pacijenata sa Parkinsonovom bolešću",
+            venue: "Neurology, 2022",
+            desc: "Desetogodišnja studija praćenja pacijenata sa Parkinsonovom bolešću nakon primene duboke moždane stimulacije."
+          },
+          {
+            title: "Primena veštačke inteligencije u planiranju neurohirurških operacija",
+            venue: "Surgical Neurology International, 2021",
+            desc: "Inovativni pristup korišćenja AI algoritama za precizno planiranje neurohirurških intervencija i poboljšanje ishoda lečenja."
+          },
+          {
+            title: "Minimalno invazivne tehnike u hirurgiji kičmene moždine",
+            venue: "Spine Journal, 2020",
+            desc: "Razvoj i implementacija novih minimalno invazivnih pristupa u lečenju oboljenja kičmene moždine sa značajnim smanjenjem vremena oporavka."
+          }
+        ]
+      },
+      "nikola-miles": {
+        name: "Nikola Miles",
+        profile: "nikola-miles",
+        publications: [
+          {
+            title: "Napredne tehnike u minimalno invazivnoj kardiohirurgiji",
+            venue: "Journal of Thoracic and Cardiovascular Surgery , 2023",
+            desc: "Istraživanje novih minimalno invazivnih pristupa koji značajno smanjuju postoperativne komplikacije kod pacijenata sa koronarnim bolestima."
+          },
+          {
+            title: "Dugoročni rezultati implantacije LVAD-a kod pacijenata sa terminalnom kardiomiopatijom",
+            venue: "Circulation , 2022",
+            desc: "Desetogodišnja studija praćenja pacijenata sa terminalnom kardiomiopatijom nakon implantacije ventrikularne pumpe (LVAD)."
+          },
+          {
+            title: "Primena veštačke inteligencije u planiranju kardiohirurških operacija",
+            venue: "European Journal of Cardio-Thoracic Surgery , 2021",
+            desc: "Inovativni pristup korišćenjem AI algoritama za precizno planiranje kardiohirurških intervencija i poboljšanje ishoda lečenja."
+          },
+          {
+            title: "Minimalno invazivne tehnike u lečenju aortnog aneurizma",
+            venue: "The Annals of Thoracic Surgery , 2020",
+            desc: "Razvoj i implementacija novih minimalno invazivnih pristupa u lečenju aortnog aneurizma sa značajnim smanjenjem vremena operacije i boljim ishodima."
+          }
+        ]
+      }
+    };
+
+    function getDoctorFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('doctor') || 'bobi-nacho';
+    }
+
+    function renderPublications() {
+      const doctorKey = getDoctorFromQuery();
+      const doc = doctors[doctorKey] || doctors['bobi-nacho'];
+      document.getElementById('subtitle').textContent = `Kompletna lista naučnih radova, knjiga i članaka Prof. dr ${doc.name}`;
+      const backLink = document.getElementById('back-link');
+      backLink.href = doc.profile;
+
+      const container = document.getElementById('publications-list');
+      container.innerHTML = '';
+      doc.publications.forEach(pub => {
+        const item = document.createElement('div');
+        item.className = 'bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow';
+        item.innerHTML = `<h3 class="text-lg font-semibold text-gray-800 mb-2">${pub.title}</h3>` +
+                         `<p class="text-gray-600 mb-4">${pub.venue}</p>` +
+                         `<p class="text-gray-700">${pub.desc}</p>`;
+        container.appendChild(item);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', renderPublications);
+  </script>
+</body>
+</html>
