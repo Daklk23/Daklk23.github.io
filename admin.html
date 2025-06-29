@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+</head>
+<body class="bg-gray-100 py-20">
+  <div class="max-w-xl mx-auto bg-white shadow p-6 rounded" id="login-form">
+    <h1 class="text-2xl font-bold mb-4 text-center">Admin Login</h1>
+    <div class="space-y-4">
+      <input type="text" id="username" placeholder="Korisničko ime" class="w-full border p-2 rounded">
+      <input type="password" id="password" placeholder="Lozinka" class="w-full border p-2 rounded">
+      <button id="login-btn" class="w-full bg-blue-600 text-white py-2 rounded">Prijavi se</button>
+    </div>
+  </div>
+  <div class="max-w-xl mx-auto bg-white shadow p-6 rounded hidden" id="admin-panel">
+    <h1 class="text-2xl font-bold mb-4 text-center">Administracija doktora</h1>
+    <div class="space-y-4">
+      <input type="text" id="doctor-name" placeholder="Ime doktora" class="w-full border p-2 rounded">
+      <input type="text" id="doctor-page" placeholder="Link ka stranici" class="w-full border p-2 rounded">
+      <input type="text" id="doctor-image" placeholder="Putanja do slike" class="w-full border p-2 rounded">
+      <button id="add-doctor" class="w-full bg-green-600 text-white py-2 rounded">Dodaj doktora</button>
+    </div>
+    <h2 class="text-xl font-bold mt-6 mb-2">Lista doktora</h2>
+    <ul id="doctor-list" class="space-y-2"></ul>
+  </div>
+  <script>
+    const credentials = { username: 'admin', password: 'password123' };
+    const loginForm = document.getElementById('login-form');
+    const adminPanel = document.getElementById('admin-panel');
+
+    function loadDoctors() {
+      const list = document.getElementById('doctor-list');
+      list.innerHTML = '';
+      const doctors = JSON.parse(localStorage.getItem('doctors') || '[]');
+      doctors.forEach((doc, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center border p-2 rounded';
+        li.innerHTML = `<span>${doc.name}</span> <button data-index="${index}" class="delete bg-red-600 text-white px-2 py-1 rounded">Obriši</button>`;
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('login-btn').addEventListener('click', () => {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if (user === credentials.username && pass === credentials.password) {
+        localStorage.setItem('loggedIn', 'true');
+        loginForm.classList.add('hidden');
+        adminPanel.classList.remove('hidden');
+        loadDoctors();
+      } else {
+        alert('Pogrešni podaci');
+      }
+    });
+
+    document.getElementById('add-doctor').addEventListener('click', () => {
+      const name = document.getElementById('doctor-name').value.trim();
+      const page = document.getElementById('doctor-page').value.trim();
+      const image = document.getElementById('doctor-image').value.trim();
+      if (!name || !page || !image) return;
+      const doctors = JSON.parse(localStorage.getItem('doctors') || '[]');
+      doctors.push({ name, page, image });
+      localStorage.setItem('doctors', JSON.stringify(doctors));
+      document.getElementById('doctor-name').value = '';
+      document.getElementById('doctor-page').value = '';
+      document.getElementById('doctor-image').value = '';
+      loadDoctors();
+    });
+
+    document.getElementById('doctor-list').addEventListener('click', (e) => {
+      if (e.target.classList.contains('delete')) {
+        const idx = e.target.getAttribute('data-index');
+        const doctors = JSON.parse(localStorage.getItem('doctors') || '[]');
+        doctors.splice(idx, 1);
+        localStorage.setItem('doctors', JSON.stringify(doctors));
+        loadDoctors();
+      }
+    });
+
+    if (localStorage.getItem('loggedIn') === 'true') {
+      loginForm.classList.add('hidden');
+      adminPanel.classList.remove('hidden');
+      loadDoctors();
+    }
+  </script>
+</body>
+</html>
