@@ -493,7 +493,7 @@ Inovativni pristup korišćenjem AI algoritama za precizno planiranje kardiohiru
         </div>
       </div>
       <div class="text-center mt-10">
-        <a href="Sve-publikacije-Prof.-dr-No.html" data-readdy="true"
+        <a href="publikacije.html?doctor=nikola-miles" data-readdy="true"
           class="inline-flex items-center text-primary hover:text-primary/80 transition-colors">
           <span>Pogledajte sve publikacije</span>
           <div class="w-5 h-5 flex items-center justify-center ml-2">
