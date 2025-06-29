@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin panel | Elysium</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: '#1e5b9b', secondary: '#d4af37' },
+          borderRadius: {
+            none: '0px',
+            sm: '4px',
+            DEFAULT: '8px',
+            md: '12px',
+            lg: '16px',
+            xl: '20px',
+            '2xl': '24px',
+            '3xl': '32px',
+            full: '9999px',
+            button: '8px'
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+  <style>
+    :where([class^='ri-'])::before { content: '\f3c2'; }
+    body { font-family: 'Montserrat', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html" class="text-primary font-['Pacifico'] text-3xl">Elysium</a>
+      <button id="logout" class="hidden text-gray-800 hover:text-primary transition-colors">Odjavi se</button>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-6 py-12">
+    <div id="login-form" class="max-w-md mx-auto">
+      <h1 class="text-2xl font-bold text-primary mb-4 text-center">Admin prijava</h1>
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2" for="username">Korisničko ime</label>
+          <input id="username" type="text" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2" for="password">Lozinka</label>
+          <input id="password" type="password" class="w-full border rounded px-3 py-2" />
+        </div>
+        <button id="login" class="w-full bg-primary text-white rounded py-2">Prijavi se</button>
+      </div>
+    </div>
+
+    <div id="admin-panel" class="hidden">
+      <h1 class="text-3xl font-bold text-primary mb-6 text-center">Administracija doktora</h1>
+      <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-xl font-semibold mb-4">Dodaj doktora</h2>
+        <div class="grid md:grid-cols-3 gap-4">
+          <input id="new-name" type="text" placeholder="Ime" class="border rounded px-3 py-2" />
+          <input id="new-profile" type="text" placeholder="Profil (link)" class="border rounded px-3 py-2" />
+          <input id="new-image" type="text" placeholder="Slika (putanja)" class="border rounded px-3 py-2" />
+        </div>
+        <button id="add" class="mt-4 bg-primary text-white rounded px-4 py-2">Dodaj</button>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4">Lista doktora</h2>
+        <ul id="doctor-list" class="space-y-2"></ul>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const credentials = { username: 'admin', password: 'password123' };
+
+    function loadDoctors() {
+      let docs = JSON.parse(localStorage.getItem('doctors'));
+      if (!docs) {
+        docs = [
+          { name: 'Bobi Nacho', profile: 'bobi-nacho.html', image: 'bobi.png' },
+          { name: 'Nikola Miles', profile: 'nikola-miles.html', image: 'bobi2.png' }
+        ];
+        localStorage.setItem('doctors', JSON.stringify(docs));
+      }
+      return docs;
+    }
+
+    function saveDoctors(docs) {
+      localStorage.setItem('doctors', JSON.stringify(docs));
+    }
+
+    function renderDoctors() {
+      const list = document.getElementById('doctor-list');
+      const docs = loadDoctors();
+      list.innerHTML = '';
+      docs.forEach((doc, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center border rounded px-3 py-2';
+        li.innerHTML = `<span>${doc.name}</span>` +
+          `<button data-index="${index}" class="delete bg-red-500 text-white rounded px-2 py-1">Obriši</button>`;
+        list.appendChild(li);
+      });
+    }
+
+    function showPanel() {
+      document.getElementById('login-form').classList.add('hidden');
+      document.getElementById('admin-panel').classList.remove('hidden');
+      document.getElementById('logout').classList.remove('hidden');
+      renderDoctors();
+    }
+
+    document.getElementById('login').addEventListener('click', () => {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if (user === credentials.username && pass === credentials.password) {
+        sessionStorage.setItem('loggedIn', 'true');
+        showPanel();
+      } else {
+        alert('Neispravni podaci');
+      }
+    });
+
+    document.getElementById('logout').addEventListener('click', () => {
+      sessionStorage.removeItem('loggedIn');
+      location.reload();
+    });
+
+    document.getElementById('add').addEventListener('click', () => {
+      const name = document.getElementById('new-name').value.trim();
+      const profile = document.getElementById('new-profile').value.trim();
+      const image = document.getElementById('new-image').value.trim();
+      if (name && profile) {
+        const docs = loadDoctors();
+        docs.push({ name, profile, image });
+        saveDoctors(docs);
+        document.getElementById('new-name').value = '';
+        document.getElementById('new-profile').value = '';
+        document.getElementById('new-image').value = '';
+        renderDoctors();
+      }
+    });
+
+    document.getElementById('doctor-list').addEventListener('click', (e) => {
+      if (e.target.classList.contains('delete')) {
+        const index = parseInt(e.target.dataset.index, 10);
+        const docs = loadDoctors();
+        docs.splice(index, 1);
+        saveDoctors(docs);
+        renderDoctors();
+      }
+    });
+
+    if (sessionStorage.getItem('loggedIn') === 'true') {
+      showPanel();
+    }
+  </script>
+</body>
+</html>
