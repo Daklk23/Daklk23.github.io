@@ -1,110 +1,122 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roleplay Inspektor</title>
+  <title>IPTV Playlist Checker</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background-color: #f8f9fa;
+      background: linear-gradient(to right, #2c3e50, #4b79a1);
+      color: #ecf0f1;
+      min-height: 100vh;
     }
     header {
-      background-color: #2c3e50;
-      color: #ecf0f1;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
       padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
       text-align: center;
     }
-    nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      border: none;
+      font-size: 1rem;
     }
-    nav a {
-      color: #ecf0f1;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    .hero {
-      background-image: url('https://placehold.co/1200x400?text=Inspektor');
-      background-size: cover;
-      background-position: center;
+    button {
+      background: #27ae60;
       color: #fff;
-      padding: 100px 20px;
-      text-align: center;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
     }
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
+    button:hover {
+      background: #2ecc71;
     }
-    .content {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-    }
-    footer {
-      background-color: #2c3e50;
-      color: #ecf0f1;
-      text-align: center;
-      padding: 20px;
-      margin-top: 40px;
+    #result {
+      margin-top: 20px;
+      font-size: 1.1rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Inspektor Roleplay</h1>
-    <nav>
-      <ul>
-        <li><a href="#home">Početna</a></li>
-        <li><a href="#about">O nama</a></li>
-        <li><a href="#cases">Slučajevi</a></li>
-        <li><a href="#contact">Kontakt</a></li>
-      </ul>
-    </nav>
+    <h1>IPTV Playlist Checker</h1>
   </header>
+  <main class="container">
+    <p>Check if your IPTV playlist is valid by pasting a URL or uploading a file.</p>
+    <input type="text" id="playlistUrl" placeholder="Playlist URL">
+    <p>or</p>
+    <input type="file" id="playlistFile" accept=".m3u,.m3u8">
+    <div>
+      <button id="checkBtn">Check Playlist</button>
+    </div>
+    <div id="result"></div>
+    <p style="font-size:0.9rem;margin-top:20px;">Note: Some remote playlists may not load due to CORS restrictions.</p>
+  </main>
+  <script>
+    async function fetchPlaylist(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const text = await response.text();
+        return { text };
+      } catch (err) {
+        return { error: err.message };
+      }
+    }
 
-  <section class="hero" id="home">
-    <h1>Dobro došli u svet inspektora</h1>
-    <p>Upustite se u uzbudljive istrage i rešite misterije zajedno sa svojim timom.</p>
-  </section>
+    function parsePlaylist(text) {
+      const lines = text.split(/\r?\n/);
+      const valid = lines[0].trim() === '#EXTM3U';
+      const channels = lines.filter(line => line.startsWith('#EXTINF')).length;
+      return { valid, channels };
+    }
 
-  <section class="content" id="about">
-    <h2>O nama</h2>
-    <p>
-      Ova stranica je zamišljena kao početna tačka za roleplay zajednicu koja
-      voli da glumi inspektore. Ovde možete pronaći osnovne informacije o
-      pravilima igre, kao i korisne resurse za izradu interesantnih priča.
-    </p>
-  </section>
+    document.getElementById('checkBtn').addEventListener('click', async () => {
+      const url = document.getElementById('playlistUrl').value.trim();
+      const file = document.getElementById('playlistFile').files[0];
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = 'Checking...';
 
-  <section class="content" id="cases">
-    <h2>Slučajevi</h2>
-    <p>
-      Uskoro ćemo objavljivati predloge slučajeva i ideje za istrage koje možete
-      istraživati u svojoj avanturi. Pridružite se zajednici i doprinesite sopstvenim
-      zapletima!
-    </p>
-  </section>
-
-  <section class="content" id="contact">
-    <h2>Kontakt</h2>
-    <p>
-      Imate pitanja ili predloge? Pišite nam na <a href="mailto:inspektor@primer.rs">inspektor@primer.rs</a>
-      i pridružite se našem Discord serveru za više informacija.
-    </p>
-  </section>
-
-  <footer>
-    &copy; 2024 Inspektor Roleplay
-  </footer>
+      if (url) {
+        const { text, error } = await fetchPlaylist(url);
+        if (error) {
+          resultDiv.textContent = 'Error fetching playlist: ' + error + '. It might be blocked by CORS.';
+          return;
+        }
+        const { valid, channels } = parsePlaylist(text);
+        resultDiv.innerHTML = valid
+          ? `Valid playlist with <strong>${channels}</strong> channels.`
+          : 'The file does not look like a valid M3U playlist.';
+      } else if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const text = e.target.result;
+          const { valid, channels } = parsePlaylist(text);
+          resultDiv.innerHTML = valid
+            ? `Valid playlist with <strong>${channels}</strong> channels.`
+            : 'The file does not look like a valid M3U playlist.';
+        };
+        reader.onerror = () => {
+          resultDiv.textContent = 'Error reading file.';
+        };
+        reader.readAsText(file);
+      } else {
+        resultDiv.textContent = 'Please provide a playlist URL or select a file.';
+      }
+    });
+  </script>
 </body>
 </html>
