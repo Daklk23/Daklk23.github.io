@@ -1,0 +1,55 @@
+// Prisma schema for Vantage Roleplay
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  discordId String?  @unique
+  username  String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  roles     UserRoleSnapshot?
+}
+
+model UserRoleSnapshot {
+  id     String   @id @default(cuid())
+  roles  String[]
+  user   User     @relation(fields: [userId], references: [id])
+  userId String   @unique
+}
+
+model Permission {
+  id   String @id @default(cuid())
+  key  String @unique
+}
+
+model RoleMap {
+  id             String   @id @default(cuid())
+  discordRoleName String   @unique
+  permissions    String[]
+}
+
+model ContentBlock {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  body      String
+  updatedBy String?
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
